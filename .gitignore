@@ -1,0 +1,29 @@
+# Virtual environment
+.venv/
+
+# Generated files
+catboost_info/
+results/
+
+# Trained models
+models/
+
+# Python cache
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# NumPy files
+*.npy
+*.npz
+
+# VS Code
+.vscode/
+
+# Environment files
+.env
+
+# Logs
+*.log
+
+dataset/*.sas7bdat
