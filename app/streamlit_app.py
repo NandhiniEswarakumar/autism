@@ -72,6 +72,7 @@ html,body,[class*="css"]{font-family:'Inter',sans-serif;background:#070E1A;color
           padding:1.1rem;margin-top:.7rem;}
 .q-box{background:#0D1627;border-left:3px solid #3B82F6;border-radius:8px;
        padding:.75rem 1rem;margin-bottom:.7rem;}
+.q-box b, .q-box, .q-box p, .q-box div{color:#FFFFFF !important;}
 .divider{height:1px;background:linear-gradient(90deg,transparent,#3B82F6,transparent);
          margin:1.4rem 0;}
 .feature-group{background:#0D1627;border:1px solid #1E3A5F;border-radius:12px;
@@ -200,22 +201,6 @@ FEATURE_GROUPS = {
         "TALKABOUT":  ("Talks about feelings?","radio",{1:"Yes",0:"No"},1),
         "K7Q30":      ("Feels safe in neighborhood?","radio",{1:"Yes",0:"No"},1),
         "K7Q31":      ("Community members help each other?","radio",{1:"Yes",0:"No"},1),
-    },
-    "🏠 Socioeconomic & Family": {
-        "HHCOUNT":      ("Household members count","slider",1,10,4),
-        "FAMCOUNT":     ("Family members count","slider",1,10,4),
-        "CURRCOV":      ("Currently insured?","radio",{1:"Yes",0:"No"},1),
-        "TENURE":       ("Home ownership?","radio",{1:"Owned",0:"Rented"},1),
-        "EVERHOMELESS": ("Ever been homeless?","radio",{1:"Yes",0:"No"},0),
-        "MISSMORTGAGE": ("Missed mortgage/rent payment?","radio",{1:"Yes",0:"No"},0),
-        "FPL_I1":       ("Federal Poverty Level (%)","slider",0,400,200),
-        "BIRTHWT":      ("Birth weight category","select",{1:"Normal",2:"Low",3:"Very Low"},1),
-        "BIRTHWT_VL":   ("Very low birth weight?","radio",{1:"Yes",0:"No"},0),
-        "BORNUSA":      ("Born in USA?","radio",{1:"Yes",0:"No"},1),
-        "HHLANGUAGE":   ("Household language","select",{1:"English",2:"Spanish",3:"Other"},1),
-        "ACE1":         ("Parents divorced/separated?","radio",{1:"Yes",0:"No"},0),
-        "ACE3":         ("Parent died?","radio",{1:"Yes",0:"No"},0),
-        "ACE4":         ("Parent in jail?","radio",{1:"Yes",0:"No"},0),
     },
 }
 
