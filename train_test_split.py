@@ -20,6 +20,8 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 print("Training Data:", X_train.shape)
 print("Testing Data :", X_test.shape)
+print("X_test shape :", X_test.shape, "| length:", len(X_test))
+print("y_test shape :", y_test.shape, "| length:", len(y_test))
 
 # Save split datasets to CSV files
 X_train.to_csv("dataset/X_train.csv", index=False)

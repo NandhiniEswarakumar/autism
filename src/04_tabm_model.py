@@ -98,10 +98,6 @@ class PLEEmbedder(nn.Module):
             parts.append(x[:, self.n_num:])            # pass-through cols
         return torch.cat(parts, dim=-1)                 # (batch, out_dim)
 
-
-# -------------------------------------------------------------
-# BATCH ENSEMBLE LAYER
-# -------------------------------------------------------------
 class BatchEnsembleLinear(nn.Module):
     """
     Efficient Batch Ensemble for a Linear layer.
@@ -123,10 +119,8 @@ class BatchEnsembleLinear(nn.Module):
         super().__init__()
         self.k = k
         self.linear = nn.Linear(in_features, out_features, bias=bias)
-        # Per-head rank-1 perturbation vectors
         self.r = nn.Parameter(torch.ones(k, in_features))   # input scale
         self.s = nn.Parameter(torch.ones(k, out_features))  # output scale
-        # Initialise with small noise for diversity
         nn.init.normal_(self.r, mean=1.0, std=0.1)
         nn.init.normal_(self.s, mean=1.0, std=0.1)
 
@@ -138,18 +132,13 @@ class BatchEnsembleLinear(nn.Module):
         Returns:
             out : (batch * k, out_features)
         """
-        # x already has shape (batch*k, in)
-        # Apply head-specific input scaling
+
         out = self.linear(x * self.r.repeat_interleave(
             x.shape[0] // self.k, dim=0))                   # (batch*k, out)
         out = out * self.s.repeat_interleave(
             x.shape[0] // self.k, dim=0)
         return out
 
-
-# -------------------------------------------------------------
-# TABM BLOCK  (one residual-style MLP block)
-# -------------------------------------------------------------
 class TabMBlock(nn.Module):
     """
     One MLP block used inside TabM:
@@ -172,10 +161,6 @@ class TabMBlock(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.drop(self.act(self.bn(self.linear(x))))
 
-
-# -------------------------------------------------------------
-# FULL TABM MODEL
-# -------------------------------------------------------------
 class TabM(nn.Module):
     """
     TabM -- Tabular Mini-batch Ensemble Model

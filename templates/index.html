@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASD Clinical Intelligence Portal — Early Detection System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- TOP NAVIGATION BAR -->
+        <header class="topbar">
+            <div class="brand-group">
+                <div class="brand-icon">🧠</div>
+                <div>
+                    <h1 class="brand-title">ASD Clinical Detection Portal</h1>
+                    <p class="brand-sub">TabM PyTorch Neural Network & SHAP Clinical Screening</p>
+                </div>
+            </div>
+            
+            <div id="user-header-profile" class="user-badge-group" style="display:none;">
+                <div class="user-badge">
+                    <span id="header-user-name" class="user-name">👤 Loading...</span>
+                    <span id="header-role-pill" class="role-pill-patient">PATIENT</span>
+                </div>
+                <button id="btn-header-logout" class="btn btn-secondary btn-sm">🚪 Logout</button>
+            </div>
+        </header>
+
+        <!-- AUTHENTICATION SCREEN (LOGIN & SIGNUP) -->
+        <main id="view-auth" class="view-section">
+            <div class="auth-grid">
+                <div class="auth-hero-container">
+                    <div class="auth-kicker">Clinical Intelligence Platform</div>
+                    <h1 class="auth-headline">Early ASD Screening with Explainable AI</h1>
+                    <p class="auth-desc">
+                        An advanced pediatric developmental assessment portal powered by TabM ensemble deep learning models, M-CHAT-R clinical protocol, and SHAP explainability.
+                    </p>
+                    <div class="feature-pill-group">
+                        <span class="feature-pill">⚡ 70 Clinical Features</span>
+                        <span class="feature-pill">🧠 TabM Deep Neural Net</span>
+                        <span class="feature-pill">📊 SHAP Interpretability</span>
+                        <span class="feature-pill">📋 M-CHAT-R Standard</span>
+                        <span class="feature-pill">🔒 Secure Data Handling</span>
+                    </div>
+                </div>
+
+                <div class="auth-card-container">
+                    <div class="auth-toggle-group">
+                        <button id="btn-toggle-login" class="btn btn-toggle active">🔑 Login</button>
+                        <button id="btn-toggle-signup" class="btn btn-toggle">📝 Sign Up</button>
+                    </div>
+
+                    <!-- LOGIN FORM -->
+                    <div id="form-box-login" class="auth-form-box">
+                        <h2 class="auth-form-title">Welcome Back</h2>
+                        <p class="auth-form-sub">Sign in to access your screening workspace or admin portal</p>
+                        
+                        <div id="login-alert" class="alert alert-danger" style="display:none;"></div>
+                        
+                        <form id="form-login" onsubmit="return false;">
+                            <div class="form-group">
+                                <label for="login-username">Username</label>
+                                <input type="text" id="login-username" class="form-control" placeholder="e.g. Nandhini or admin" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="login-password">Password</label>
+                                <input type="password" id="login-password" class="form-control" placeholder="Enter password" required>
+                            </div>
+                            <button type="submit" id="btn-submit-login" class="btn btn-primary btn-block">Sign In to Workspace</button>
+                        </form>
+
+                        <div class="demo-btn-group">
+                            <button id="btn-demo-patient" class="btn btn-outline btn-block">👤 Patient Login</button>
+                            <button id="btn-demo-admin" class="btn btn-outline-purple btn-block">👑 Admin Login</button>
+                        </div>
+                    </div>
+
+                    <!-- SIGNUP FORM -->
+                    <div id="form-box-signup" class="auth-form-box" style="display:none;">
+                        <h2 class="auth-form-title">Create Account</h2>
+                        <p class="auth-form-sub">Register a new patient account for confidential ASD screening</p>
+                        
+                        <div id="signup-alert" class="alert alert-danger" style="display:none;"></div>
+                        
+                        <form id="form-signup" onsubmit="return false;">
+                            <div class="form-group">
+                                <label for="signup-fullname">Full Name / Child Name</label>
+                                <input type="text" id="signup-fullname" class="form-control" placeholder="e.g. John Doe" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="signup-username">Create Patient Username</label>
+                                <input type="text" id="signup-username" class="form-control" placeholder="e.g. johndoe" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="signup-password">Create Password</label>
+                                <input type="password" id="signup-password" class="form-control" placeholder="Min. 4 characters" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="signup-confirm">Confirm Password</label>
+                                <input type="password" id="signup-confirm" class="form-control" placeholder="Repeat password" required>
+                            </div>
+                            <button type="submit" id="btn-submit-signup" class="btn btn-primary btn-block">Register Patient Account</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- MAIN LOGGED-IN WORKSPACE -->
+        <div id="workspace-container" style="display:none;">
+            <!-- NAVIGATION TABS -->
+            <nav class="nav-tabs-bar">
+                <button id="nav-btn-admin" class="nav-btn nav-btn-admin" style="display:none;" data-view="view-admin">👑 Admin Panel</button>
+                <button id="nav-btn-step1" class="nav-btn active" data-view="view-step1">🔍 Clinical Input</button>
+                <button id="nav-btn-step2" class="nav-btn" data-view="view-step2">📋 M-CHAT-R Quiz</button>
+                <button id="nav-btn-step3" class="nav-btn" data-view="view-step3">🩺 Result & Doctor</button>
+                <button id="nav-btn-dash" class="nav-btn" data-view="view-dashboard">📊 Dashboard</button>
+                <button id="nav-btn-shap" class="nav-btn" data-view="view-shap">📈 SHAP Explorer</button>
+            </nav>
+
+            <!-- VIEW: ADMIN PANEL -->
+            <section id="view-admin" class="workspace-view" style="display:none;">
+                <div class="admin-banner">
+                    <h2>👑 Admin Management & Patient Records Portal</h2>
+                    <p>Comprehensive view of patient assessments, risk breakdown, and system diagnostics.</p>
+                </div>
+
+                <!-- KPI SUMMARY GRID -->
+                <div class="kpi-grid">
+                    <div class="kpi-card"><p id="kpi-total-patients" class="kpi-val text-blue">0</p><p class="kpi-label">Patients</p></div>
+                    <div class="kpi-card"><p id="kpi-high-risk" class="kpi-val text-red">0</p><p class="kpi-label">High Risk</p></div>
+                    <div class="kpi-card"><p id="kpi-mod-risk" class="kpi-val text-amber">0</p><p class="kpi-label">Mod Risk</p></div>
+                    <div class="kpi-card"><p id="kpi-low-risk" class="kpi-val text-green">0</p><p class="kpi-label">Low Risk</p></div>
+                    <div class="kpi-card"><p id="kpi-total-screenings" class="kpi-val text-purple">0</p><p class="kpi-label">Screenings</p></div>
+                    <div class="kpi-card"><p id="kpi-avg-score" class="kpi-val text-pink">0%</p><p class="kpi-label">Avg Risk</p></div>
+                </div>
+
+                <div class="sub-tabs-bar">
+                    <button id="subtab-btn-directory" class="subtab-btn active">📋 Patient Directory & Screening Records</button>
+                    <button id="subtab-btn-create" class="subtab-btn">➕ Create Patient Account</button>
+                    <button id="subtab-btn-specs" class="subtab-btn">⚙️ System & Model Specs</button>
+                </div>
+
+                <!-- SUBTAB: PATIENT DIRECTORY -->
+                <div id="admin-subtab-directory" class="subtab-content">
+                    <div class="toolbar-grid">
+                        <input type="text" id="admin-search-input" class="form-control" placeholder="🔍 Search patient by username or full name...">
+                        <select id="admin-risk-select" class="form-control">
+                            <option value="ALL">All Risk Levels</option>
+                            <option value="HIGH">🚨 High Risk</option>
+                            <option value="MODERATE">⚠️ Moderate Risk</option>
+                            <option value="LOW">✅ Low Risk</option>
+                            <option value="UNSCREENED">Unscreened</option>
+                        </select>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Full Name</th>
+                                    <th>Total Assessments</th>
+                                    <th>Latest AI Risk</th>
+                                    <th>Latest Combined</th>
+                                    <th>Risk Level</th>
+                                    <th>Last Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-patients-body">
+                                <tr><td colspan="8" class="text-center">Loading patient records...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- PATIENT INSPECTOR DRAWER -->
+                    <div id="patient-inspector-card" class="inspector-card" style="display:none;">
+                        <div class="inspector-header">
+                            <div>
+                                <h3 id="inspect-patient-title">👤 Patient Details</h3>
+                                <p id="inspect-patient-sub" class="text-sub">Registered At: —</p>
+                            </div>
+                            <div class="btn-group-right">
+                                <button id="btn-inspect-clear" class="btn btn-warning btn-sm">🧹 Clear History</button>
+                                <button id="btn-inspect-delete" class="btn btn-danger btn-sm">🗑️ Delete Account</button>
+                            </div>
+                        </div>
+
+                        <div id="inspect-latest-summary" class="inspector-metrics-grid"></div>
+
+                        <h4>Assessment History Timeline</h4>
+                        <div class="table-responsive">
+                            <table class="table-custom table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>AI Risk Score</th>
+                                        <th>M-CHAT Score</th>
+                                        <th>Combined Risk</th>
+                                        <th>Risk Category</th>
+                                        <th>Urgency Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-patient-history-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBTAB: CREATE PATIENT -->
+                <div id="admin-subtab-create" class="subtab-content" style="display:none;">
+                    <div class="card-box card-medium">
+                        <h3>Add New Patient Account</h3>
+                        <div id="admin-create-alert" class="alert alert-danger" style="display:none;"></div>
+                        <form id="form-admin-add-patient" onsubmit="return false;">
+                            <div class="form-group">
+                                <label for="admin-add-fullname">Full Name</label>
+                                <input type="text" id="admin-add-fullname" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="admin-add-username">Patient Username</label>
+                                <input type="text" id="admin-add-username" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="admin-add-password">Password</label>
+                                <input type="password" id="admin-add-password" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create Patient Account</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- SUBTAB: SYSTEM SPECS -->
+                <div id="admin-subtab-specs" class="subtab-content" style="display:none;">
+                    <div class="card-box">
+                        <h3>System Diagnostics & PyTorch Model Specs</h3>
+                        <ul class="spec-list">
+                            <li><b>Architecture:</b> TabM PyTorch Neural Network with Piecewise-Linear Embeddings (PLE)</li>
+                            <li><b>Input Features:</b> 70 Clinical & Behavioral Features (NSCH 2023)</li>
+                            <li><b>Optimal Decision Threshold:</b> 0.35</li>
+                            <li><b>ROC-AUC Score:</b> 0.927</li>
+                            <li><b>Classification Accuracy:</b> 93.46%</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: STEP 1 - CLINICAL ASSESSMENT -->
+            <section id="view-step1" class="workspace-view">
+                <div class="hero-box">
+                    <h1 class="hero-title">Step 1: Clinical Feature Assessment</h1>
+                    <p class="hero-sub">Complete the 70 clinical demographic, medical, developmental, and behavioral parameters derived from NSCH 2023.</p>
+                </div>
+
+                <div id="clinical-form-container"></div>
+
+                <div class="action-bar">
+                    <button id="btn-run-ai-prediction" class="btn btn-primary btn-lg btn-block">🔮 Run AI Neural Network Prediction (TabM-PLE)</button>
+                </div>
+
+                <div id="step1-result-box" class="result-box" style="display:none;"></div>
+            </section>
+
+            <!-- VIEW: STEP 2 - M-CHAT-R QUIZ -->
+            <section id="view-step2" class="workspace-view" style="display:none;">
+                <div class="hero-box">
+                    <h1 class="hero-title">Step 2: M-CHAT-R Clinical Questionnaire</h1>
+                    <p class="hero-sub">The Modified Checklist for Autism in Toddlers (Revised) 20-question pediatric screening protocol.</p>
+                </div>
+
+                <div id="mchat-questions-container"></div>
+
+                <div class="action-bar">
+                    <button id="btn-calc-mchat" class="btn btn-primary btn-lg btn-block">📊 Calculate M-CHAT-R Score</button>
+                </div>
+
+                <div id="step2-result-box" class="result-box" style="display:none;"></div>
+            </section>
+
+            <!-- VIEW: STEP 3 - COMBINED RESULT & DOCTOR RECOMMENDATION -->
+            <section id="view-step3" class="workspace-view" style="display:none;">
+                <div class="hero-box">
+                    <h1 class="hero-title">Step 3: Combined Risk Assessment & Doctor Referral</h1>
+                    <p class="hero-sub">Unified risk calculation blending TabM PyTorch Neural Network prediction and M-CHAT-R clinical checklist.</p>
+                </div>
+
+                <div id="step3-content"></div>
+            </section>
+
+            <!-- VIEW: DASHBOARD -->
+            <section id="view-dashboard" class="workspace-view" style="display:none;">
+                <div class="hero-box">
+                    <h1 class="hero-title">📊 Patient Workspace & Analytics</h1>
+                    <p class="hero-sub">Screening timeline, diagnostic benchmarks, and model performance metrics.</p>
+                </div>
+
+                <div id="dashboard-content"></div>
+            </section>
+
+            <!-- VIEW: SHAP EXPLORER -->
+            <section id="view-shap" class="workspace-view" style="display:none;">
+                <div class="hero-box">
+                    <h1 class="hero-title">📈 SHAP Feature Explainability</h1>
+                    <p class="hero-sub">Personalized feature contributions for the current patient's screening inputs.</p>
+                </div>
+
+                <div id="personal-shap-content"></div>
+
+                <div class="shap-plot-gallery">
+                    <div class="card-box">
+                        <h3>Global Model Reference: Top 20 Feature Importance</h3>
+                        <img src="/api/plots/34_enh_shap_beeswarm.png" alt="SHAP Beeswarm Plot" class="plot-img">
+                    </div>
+                    <div class="card-box">
+                        <h3>Global Model Reference: Feature Importance</h3>
+                        <img src="/api/plots/35_enh_shap_bar.png" alt="SHAP Bar Chart" class="plot-img">
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <p>🧠 <b>ASD Early Detection System v3.0</b> — TabM PyTorch Neural Network + SHAP + M-CHAT-R</p>
+            <p class="text-danger">⚠️ Screening Tool Only — Not a clinical medical diagnosis. Always consult a qualified specialist.</p>
+        </footer>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

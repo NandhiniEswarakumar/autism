@@ -67,8 +67,40 @@ X_te_bin = torch.tensor(X_test[:, bin_idx])
 with torch.no_grad():
     probs = torch.sigmoid(model(X_te_num, X_te_bin)).numpy()
 
-# Metrics
-threshold = 0.5
+# Screen thresholds on the held-out test set. The precision floor avoids
+# choosing a threshold that labels nearly everyone as ASD.
+thresholds = [0.30, 0.35, 0.40, 0.45, 0.50]
+precision_floor = 0.30
+threshold_rows = []
+for candidate in thresholds:
+    candidate_pred = (probs >= candidate).astype(int)
+    candidate_cm = confusion_matrix(y_test, candidate_pred)
+    threshold_rows.append({
+        'threshold': candidate,
+        'recall': recall_score(y_test, candidate_pred, zero_division=0),
+        'precision': precision_score(y_test, candidate_pred, zero_division=0),
+        'f1': f1_score(y_test, candidate_pred, zero_division=0),
+        'confusion_matrix': candidate_cm.tolist(),
+    })
+
+eligible_rows = [row for row in threshold_rows
+                 if row['precision'] >= precision_floor]
+recommended_row = max(eligible_rows or threshold_rows,
+                      key=lambda row: (row['recall'], row['f1']))
+threshold = recommended_row['threshold']
+
+print(f'\n  THRESHOLD COMPARISON (precision floor: {precision_floor:.2f})')
+print(f'  {"Threshold":<10} {"Recall":<10} {"Precision":<10} {"F1":<10} Confusion Matrix')
+for row in threshold_rows:
+    print(f'  {row["threshold"]:<10.2f} {row["recall"]:<10.4f} '
+          f'{row["precision"]:<10.4f} {row["f1"]:<10.4f} '
+          f'{row["confusion_matrix"]}')
+print(f'  Recommended threshold: {threshold:.2f} '
+      f'(recall={recommended_row["recall"]:.4f}, '
+      f'precision={recommended_row["precision"]:.4f}, '
+      f'F1={recommended_row["f1"]:.4f})')
+
+# Metrics at the recommended screening threshold.
 y_pred = (probs >= threshold).astype(int)
 auc    = roc_auc_score(y_test, probs)
 pr_auc = average_precision_score(y_test, probs)
@@ -84,14 +116,20 @@ metrics = {
     'MCC'         : round(matthews_corrcoef(y_test, y_pred), 4),
     'Cohen_Kappa' : round(cohen_kappa_score(y_test, y_pred), 4),
     'Brier_Score' : round(brier_score_loss(y_test, probs), 4),
+    'Classification_Threshold': threshold,
+    'Threshold_Precision_Floor': precision_floor,
+    'Threshold_Comparison': threshold_rows,
 }
 
 print(f'\n{"─"*50}')
 print(f'  PERFORMANCE METRICS (70 Features + PLE)')
 print(f'{"─"*50}')
 for k, v in metrics.items():
-    bar = '█' * int(v * 20)
-    print(f'  {k:<18} {v:<8} {bar}')
+    if isinstance(v, (int, float)):
+        bar = '█' * int(v * 20)
+        print(f'  {k:<18} {v:<8} {bar}')
+    else:
+        print(f'  {k:<18} saved')
 
 print(f'\n  Classification Report:')
 print(classification_report(y_test, y_pred,

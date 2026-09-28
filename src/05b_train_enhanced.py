@@ -20,6 +20,7 @@ Model: TabM-PLE (Piecewise Linear Encoding + BatchEnsemble)
 ================================================================
 """
 
+import csv
 import os, json, warnings
 import numpy as np
 import matplotlib
@@ -114,8 +115,16 @@ print('  ' + '-' * 55)
 train_losses, val_aucs, test_aucs = [], [], []
 best_val_auc  = 0.0
 best_test_auc = 0.0
+best_epoch    = None
 patience_cnt  = 0
 PATIENCE      = 10
+early_stopping_epoch = None
+
+epoch_history_path = f'{RESULTS_DIR}/epoch_history.csv'
+with open(epoch_history_path, 'w', newline='') as history_file:
+    csv.writer(history_file).writerow(
+        ['epoch', 'train_loss', 'validation_roc_auc', 'new_best']
+    )
 
 for epoch in range(1, 61):
     model.train()
@@ -144,9 +153,11 @@ for epoch in range(1, 61):
     val_aucs.append(va_auc)
     test_aucs.append(te_auc)
 
-    if va_auc > best_val_auc + 1e-4:
+    is_new_best = va_auc > best_val_auc + 1e-4
+    if is_new_best:
         best_val_auc  = va_auc
         best_test_auc = te_auc
+        best_epoch    = epoch
         patience_cnt  = 0
         torch.save(model.state_dict(), f'{MODELS_DIR}/tabm_ple_best.pth')
         status = '[SAVED]'
@@ -154,15 +165,25 @@ for epoch in range(1, 61):
         patience_cnt += 1
         status = f'(patience {patience_cnt}/{PATIENCE})'
 
+    with open(epoch_history_path, 'a', newline='') as history_file:
+        csv.writer(history_file).writerow(
+            [epoch, f'{ep_loss:.10f}', f'{va_auc:.10f}', is_new_best]
+        )
+
     if epoch % 5 == 0 or epoch == 1:
         print(f'  {epoch:<8} {ep_loss:<12.4f} {va_auc:<12.4f} {te_auc:<12.4f} {status}')
     if patience_cnt >= PATIENCE:
+        early_stopping_epoch = epoch
         print(f'\n  Early stopping at epoch {epoch}')
         break
     gc.collect()
 
 print(f'\n  Best Val AUC  : {best_val_auc:.4f}')
 print(f'  Best Test AUC : {best_test_auc:.4f}')
+print(f'  Best epoch    : {best_epoch}')
+print(f'  History saved : {epoch_history_path}')
+if early_stopping_epoch is not None:
+    print(f'  Early stopping epoch: {early_stopping_epoch}')
 
 # Save config
 cfg = {

@@ -32,6 +32,7 @@ SAS_FILE    = os.path.join(DATASET_DIR, "nsch_2023e_topical.sas7bdat")
 OUT_CSV     = os.path.join(DATASET_DIR, "asd_enhanced_dataset.csv")
 
 print("=" * 60)
+
 print("  STEP 00 -- ENHANCED FEATURE EXTRACTION")
 print("=" * 60)
 
@@ -66,12 +67,12 @@ FEATURES = {
     "STOMACH"       : "Stomach / Digestive Problem",
 
     # ── C. Comorbidities ──────────────────────────────────────
-    "K2Q31A"        : "ADHD",
-    "K2Q32A"        : "Depression",
-    "K2Q33A"        : "Anxiety",
-    "K2Q36A"        : "Intellectual Disability",
-    "K2Q37A"        : "Tourette Syndrome",
-    "K2Q60A"        : "Behavioral / Conduct Problems",
+    #"K2Q31A"        : "ADHD",
+    #"K2Q32A"        : "Depression",
+    #"K2Q33A"        : "Anxiety",
+    #"K2Q36A"        : "Intellectual Disability",
+    #"K2Q37A"        : "Tourette Syndrome",
+    #"K2Q60A"        : "Behavioral / Conduct Problems",
 
     # ── D. Developmental Milestones ───────────────────────────
     "ONEWORD"       : "Said One Word (by 12 mo)",
@@ -96,7 +97,7 @@ FEATURES = {
     "WAITFORTURN"   : "Waits for Turn",
     "HARDWORK"      : "Works Hard on Tasks",
     "SHARETOYS"     : "Shares Toys",
-    "MAKEFRIEND"    : "Makes Friends Easily",
+    #"MAKEFRIEND"    : "Makes Friends Easily",
     "TALKABOUT"     : "Talks About Thoughts & Feelings",
     "K7Q30"         : "Feels Safe in Neighborhood",
     "K7Q31"         : "People in Neighborhood Help Each Other",
@@ -233,3 +234,4 @@ feature_meta = {c: FEATURES.get(c, c) for c in feat_cols}
 with open("dataset/feature_metadata.json", "w") as f:
     json.dump(feature_meta, f, indent=2)
 print(f"  [OK] Saved -> dataset/feature_metadata.json")
+print("RAW ROWS LOADED:", len(df))

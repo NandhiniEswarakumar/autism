@@ -148,6 +148,7 @@ print(f"[7] Scaling done  ->  scaler fitted on training set only")
 # -------------------------------------------------------------
 # 8. SMOTE  (applied only on training data)
 # -------------------------------------------------------------
+
 class_before = np.bincount(y_train.values.astype(int))
 current_ratio = class_before[1] / class_before[0]
 print(f"\n[8] Before SMOTE  ->  NoASD={class_before[0]:,}  ASD={class_before[1]:,}"
